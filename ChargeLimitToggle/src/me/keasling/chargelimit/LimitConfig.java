@@ -56,9 +56,13 @@ public final class LimitConfig {
             .apply();
     }
 
-    /** Picks the first preset whose key exists on this device (falls back to the first preset). */
+    /**
+     * Picks the first preset whose key exists on this device, else guesses by manufacturer.
+     * Not saved, so detection re-runs once the adb grant makes hidden settings readable.
+     */
     private void applyDetectedPreset(Context ctx) {
-        String[] chosen = PRESETS[0];
+        String[] chosen = "samsung".equalsIgnoreCase(android.os.Build.MANUFACTURER)
+            ? PRESETS[0] : PRESETS[1];
         for (String[] preset : PRESETS) {
             if (read(ctx.getContentResolver(), preset[1], preset[2]) != null) {
                 chosen = preset;

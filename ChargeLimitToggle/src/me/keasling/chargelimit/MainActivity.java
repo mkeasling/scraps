@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.graphics.Insets;
 import android.graphics.Typeface;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.text.InputType;
 import android.view.View;
+import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -133,6 +135,17 @@ public class MainActivity extends Activity {
 
         ScrollView scroll = new ScrollView(this);
         scroll.addView(root);
+        if (Build.VERSION.SDK_INT >= 30) {
+            // Targeting API 35+ forces edge-to-edge; keep content clear of the system bars.
+            scroll.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    Insets i = insets.getInsets(
+                        WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                    v.setPadding(i.left, i.top, i.right, i.bottom);
+                    return insets;
+                }
+            });
+        }
         setContentView(scroll);
     }
 
